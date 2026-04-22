@@ -354,3 +354,4 @@ a = 2
 b = 5
 print(a*b)
 console.log(a*b)
+console.log("Hello world")
