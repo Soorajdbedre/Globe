@@ -153,20 +153,25 @@ const glowingMarkers = [];
           const lineRadius = 0.14;
           const cylGeo = new THREE.CylinderGeometry(lineRadius, lineRadius, lineHeight, 10);
           cylGeo.translate(0, lineHeight / 2, 0);
-          const lineMat = new THREE.MeshStandardMaterial({color:0x000000, metalness:0.1, roughness:0.8});
+          const lineMat = new THREE.MeshStandardMaterial({color:0x333333, metalness:0.2, roughness:0.7});
           const pinLine = new THREE.Mesh(cylGeo, lineMat);
           pinLine.position.set(0,0,0);
 
           // small sphere on top (local coordinates, y=lineHeight)
-          const sphereRadius = 0.9;
-          const sphereGeo = new THREE.SphereGeometry(sphereRadius, 12, 12);
-          const sphereMat = new THREE.MeshStandardMaterial({ color: 0x000000 });
+          const sphereRadius = 1.2;
+          const sphereGeo = new THREE.SphereGeometry(sphereRadius, 16, 16);
+          const sphereMat = new THREE.MeshStandardMaterial({ color: 0x0077ff });
           const topSphere = new THREE.Mesh(sphereGeo, sphereMat);
           topSphere.position.set(0, lineHeight, 0);
 
           // glow halo (slightly larger, additive)
-          const glowMat = new THREE.MeshBasicMaterial({ color: 0x1e90ff, transparent: true, opacity: 0.6, blending: THREE.AdditiveBlending });
-          const glowGeo = new THREE.SphereGeometry(sphereRadius * 2.2, 16, 16);
+          const glowMat = new THREE.MeshBasicMaterial({
+            color: 0x1e90ff,
+            transparent: true,
+            opacity: 0.5,
+            blending: THREE.AdditiveBlending,
+          });
+          const glowGeo = new THREE.SphereGeometry(sphereRadius * 2, 16, 16);
           const glowSphere = new THREE.Mesh(glowGeo, glowMat);
           glowSphere.position.copy(topSphere.position);
           glowingMarkers.push(glowSphere);
@@ -325,7 +330,7 @@ const glowingMarkers = [];
 
       glowingMarkers.forEach(g => {
       g.scale.set(pulse, pulse, pulse);
-      g.material.opacity = 0.45 + Math.sin(t) * 0.25;
+      g.material.opacity = 0.5 + Math.sin(t) * 0.25;
     });
     renderer.render(scene, camera); })();
 
@@ -339,19 +344,3 @@ const glowingMarkers = [];
   // populateList is defined earlier (with search/tabs). Remove duplicate simple definition.
 
 })();
-
-print("This is a test")
-
-print("This is another test") 
-
-print("This is yet another test")
-
-print("This is a final test")
-
-print("This is a final final test")
-
-a = 2
-b = 5
-print(a*b)
-console.log(a*b)
-console.log("Hello world")
