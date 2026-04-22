@@ -349,3 +349,8 @@ print("This is yet another test")
 print("This is a final test")
 
 print("This is a final final test")
+
+a = 2
+b = 5
+print(a*b)
+console.log(a*b)
