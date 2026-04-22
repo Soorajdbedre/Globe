@@ -1,0 +1,12 @@
+{
+  "name": "globe-smoke-test",
+  "version": "1.0.0",
+  "description": "Smoke test for Globe UI using Puppeteer",
+  "main": "scripts/test-smoke.js",
+  "scripts": {
+    "test-smoke": "node scripts/test-smoke.js"
+  },
+  "devDependencies": {
+    "puppeteer": "^21.0.0"
+  }
+}

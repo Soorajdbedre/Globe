@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Globe For Travel</title>
+  <style>
+    :root{--panel-bg:rgba(6,10,18,0.72);--accent:#1e90ff;color-scheme:dark}
+    html,body{height:100%;margin:0;background:#050710;color:#fff;font-family:Inter,system-ui,Segoe UI,Roboto}
+    header{padding:14px 20px;border-bottom:1px solid rgba(255,255,255,0.04);display:flex;align-items:center;justify-content:space-between}
+    header h1{font-size:18px;margin:0}
+    #container{position:relative;width:100%;height:calc(100vh - 56px);overflow:hidden}
+    canvas{display:block}
+    .panel{position:absolute;right:18px;top:18px;width:320px;background:var(--panel-bg);backdrop-filter:blur(8px);padding:12px;border-radius:10px;border:1px solid rgba(255,255,255,0.03);z-index:20}
+    .panel h2{margin:0 0 8px 0;font-size:16px}
+    .place{display:flex;align-items:center;gap:10px;padding:8px;border-radius:8px;margin-bottom:8px;background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.005))}
+    .place img{width:62px;height:42px;object-fit:cover;border-radius:6px}
+    .place button{margin-left:auto;background:var(--accent);border:none;color:white;padding:6px 10px;border-radius:8px;cursor:pointer}
+    .footer-note{font-size:12px;color:#9aa7bf;margin-top:8px}
+    .sys-msg{position:fixed;left:12px;bottom:12px;background:rgba(0,0,0,0.7);padding:10px 12px;border-radius:8px;border:1px solid rgba(255,255,255,0.04);font-size:13px;color:#e6eef6;z-index:1500}
+    @media (max-width:900px){.panel{width:92%;left:50%;transform:translateX(-50%);right:auto;top:10px}}
+
+
+    .cyber {
+  box-shadow:
+    0 0 20px rgba(30,144,255,0.25),
+    inset 0 0 30px rgba(30,144,255,0.08);
+}
+
+.cyber h2 {
+  color: #7df9ff;
+  letter-spacing: 1px;
+}
+
+#search {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 10px;
+  background: #060b18;
+  border: 1px solid rgba(125,249,255,0.4);
+  color: #7df9ff;
+  border-radius: 8px;
+  outline: none;
+  font-size: 14px;
+}
+
+#search::placeholder {
+  color: rgba(125,249,255,0.4);
+}
+
+.tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.tab {
+  flex: 1;
+  background: transparent;
+  border: 1px solid rgba(30,144,255,0.4);
+  color: #9aa7bf;
+  padding: 6px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.tab.active {
+  background: rgba(30,144,255,0.25);
+  color: #fff;
+  box-shadow: 0 0 10px rgba(30,144,255,0.6);
+}
+
+  </style>
+</head>
+<body>
+  <header>
+    <h1>TravelMap — 3D Globe (Orbit + Atmosphere)</h1>
+    <div style="font-size:13px;opacity:0.85">Robust loader for OrbitControls and graceful fallback</div>
+  </header>
+
+  <div id="container"></div>
+
+  <aside class="panel">
+    <div id="visited-list"></div>
+    <div class="footer-note">Drag to rotate, scroll to zoom. Click a place to focus on it.</div>
+
+    <h2>🌐 Travel Console</h2>
+
+  <input
+    id="search"
+    type="text"
+    placeholder="Search city, country..."/>
+
+  <div class="tabs">
+    <button class="tab active" data-type="visited">Visited</button>
+    <button class="tab" data-type="wishlist">Wishlist</button>
+  </div>
+
+  <div id="visited-list"></div>
+
+  <div class="footer-note">
+    Click a pin or search to lock target.<br>
+    Neon mode active ⚡
+  </div>
+  </aside>
+
+  <div id="sys-msg" class="sys-msg" style="display:none"></div>
+
+  <script src="globe.js"></script>
+</body>
+</html>
+
+
