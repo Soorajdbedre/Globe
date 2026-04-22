@@ -339,3 +339,5 @@ const glowingMarkers = [];
   // populateList is defined earlier (with search/tabs). Remove duplicate simple definition.
 
 })();
+
+print("This is a test")
