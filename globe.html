@@ -4,101 +4,485 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Globe For Travel</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <style>
-    :root{--panel-bg:rgba(6,10,18,0.72);--accent:#1e90ff;color-scheme:dark}
-    html,body{height:100%;margin:0;background:#050710;color:#fff;font-family:Inter,system-ui,Segoe UI,Roboto}
-    header{padding:14px 20px;border-bottom:1px solid rgba(255,255,255,0.04);display:flex;align-items:center;justify-content:space-between}
-    header h1{font-size:18px;margin:0}
-    #container{position:relative;width:100%;height:calc(100vh - 56px);overflow:hidden}
-    canvas{display:block}
-    .panel{position:absolute;right:18px;top:18px;width:320px;background:var(--panel-bg);backdrop-filter:blur(8px);padding:12px;border-radius:10px;border:1px solid rgba(255,255,255,0.03);z-index:20}
-    .panel h2{margin:0 0 8px 0;font-size:16px}
-    .place{display:flex;align-items:center;gap:10px;padding:8px;border-radius:8px;margin-bottom:8px;background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.005))}
-    .place img{width:62px;height:42px;object-fit:cover;border-radius:6px}
-    .place button{margin-left:auto;background:var(--accent);border:none;color:white;padding:6px 10px;border-radius:8px;cursor:pointer}
-    .footer-note{font-size:12px;color:#9aa7bf;margin-top:8px}
-    .sys-msg{position:fixed;left:12px;bottom:12px;background:rgba(0,0,0,0.7);padding:10px 12px;border-radius:8px;border:1px solid rgba(255,255,255,0.04);font-size:13px;color:#e6eef6;z-index:1500}
-    @media (max-width:900px){.panel{width:92%;left:50%;transform:translateX(-50%);right:auto;top:10px}}
+    :root {
+      --neon-cyan: #00f0ff;
+      --neon-magenta: #ff00ff;
+      --neon-purple: #b347ff;
+      --neon-pink: #ff2d95;
+      --dark-bg: #020208;
+      --panel-bg: rgba(5, 2, 20, 0.92);
+      --grid-color: rgba(0, 240, 255, 0.08);
+    }
 
+    * { box-sizing: border-box; }
 
-    .cyber {
-  box-shadow:
-    0 0 20px rgba(30,144,255,0.25),
-    inset 0 0 30px rgba(30,144,255,0.08);
-}
+    html, body {
+      height: 100%;
+      margin: 0;
+      background: var(--dark-bg);
+      color: #fff;
+      font-family: 'Rajdhani', system-ui, sans-serif;
+      overflow: hidden;
+    }
 
-.cyber h2 {
-  color: #7df9ff;
-  letter-spacing: 1px;
-}
+    /* Animated grid background */
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: 
+        linear-gradient(90deg, transparent 49.5%, var(--grid-color) 50%, transparent 50.5%),
+        linear-gradient(0deg, transparent 49.5%, var(--grid-color) 50%, transparent 50.5%);
+      background-size: 80px 80px;
+      pointer-events: none;
+      z-index: 0;
+      animation: gridPulse 6s ease-in-out infinite;
+    }
 
-#search {
-  width: 100%;
-  padding: 10px;
-  margin-bottom: 10px;
-  background: #060b18;
-  border: 1px solid rgba(125,249,255,0.4);
-  color: #7df9ff;
-  border-radius: 8px;
-  outline: none;
-  font-size: 14px;
-}
+    @keyframes gridPulse {
+      0%, 100% { opacity: 0.5; }
+      50% { opacity: 1; }
+    }
 
-#search::placeholder {
-  color: rgba(125,249,255,0.4);
-}
+    /* Scanline effect */
+    body::after {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 3px,
+        rgba(0, 0, 0, 0.08) 3px,
+        rgba(0, 0, 0, 0.08) 6px
+      );
+      pointer-events: none;
+      z-index: 9999;
+    }
 
-.tabs {
-  display: flex;
-  gap: 8px;
-  margin-bottom: 10px;
-}
+    header {
+      position: relative;
+      z-index: 100;
+      padding: 14px 24px;
+      background: linear-gradient(180deg, rgba(5, 2, 20, 0.98) 0%, rgba(5, 2, 20, 0.7) 70%, transparent 100%);
+      border-bottom: 1px solid rgba(0, 240, 255, 0.2);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
 
-.tab {
-  flex: 1;
-  background: transparent;
-  border: 1px solid rgba(30,144,255,0.4);
-  color: #9aa7bf;
-  padding: 6px;
-  border-radius: 8px;
-  cursor: pointer;
-}
+    header h1 {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 20px;
+      font-weight: 900;
+      margin: 0;
+      background: linear-gradient(90deg, var(--neon-cyan), var(--neon-magenta), var(--neon-cyan));
+      background-size: 200% 100%;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: gradientShift 3s ease infinite;
+      letter-spacing: 4px;
+      text-shadow: none;
+    }
 
-.tab.active {
-  background: rgba(30,144,255,0.25);
-  color: #fff;
-  box-shadow: 0 0 10px rgba(30,144,255,0.6);
-}
+    @keyframes gradientShift {
+      0%, 100% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+    }
 
+    header .subtitle {
+      font-size: 11px;
+      color: var(--neon-cyan);
+      text-transform: uppercase;
+      letter-spacing: 3px;
+      opacity: 0.7;
+      animation: flicker 4s infinite;
+      text-shadow: 0 0 10px var(--neon-cyan);
+    }
+
+    @keyframes flicker {
+      0%, 100% { opacity: 0.7; }
+      92% { opacity: 0.7; }
+      93% { opacity: 0.3; }
+      94% { opacity: 0.9; }
+      96% { opacity: 0.4; }
+      97% { opacity: 0.8; }
+    }
+
+    #container {
+      position: relative;
+      width: 100%;
+      height: calc(100vh - 60px);
+      overflow: hidden;
+      z-index: 1;
+    }
+
+    canvas { display: block; }
+
+    /* Cyberpunk Panel */
+    .panel {
+      position: absolute;
+      right: 20px;
+      top: 20px;
+      width: 320px;
+      background: var(--panel-bg);
+      backdrop-filter: blur(16px);
+      padding: 0;
+      border-radius: 4px;
+      border: 1px solid rgba(0, 240, 255, 0.3);
+      z-index: 20;
+      overflow: hidden;
+      box-shadow: 
+        0 0 40px rgba(0, 240, 255, 0.15),
+        0 0 80px rgba(255, 0, 255, 0.08),
+        inset 0 0 40px rgba(0, 240, 255, 0.03);
+    }
+
+    .panel::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--neon-cyan), var(--neon-magenta), transparent);
+      animation: borderGlow 3s linear infinite;
+    }
+
+    @keyframes borderGlow {
+      0%, 100% { opacity: 0.7; filter: blur(0px); }
+      50% { opacity: 1; filter: blur(1px); }
+    }
+
+    .panel-header {
+      padding: 14px 16px;
+      background: rgba(0, 240, 255, 0.03);
+      border-bottom: 1px solid rgba(0, 240, 255, 0.15);
+    }
+
+    .panel-header h2 {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 13px;
+      margin: 0;
+      color: var(--neon-cyan);
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      text-shadow: 0 0 15px var(--neon-cyan);
+    }
+
+    .panel-header h2::before {
+      content: '▸';
+      animation: blink 1.2s infinite;
+    }
+
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.2; }
+    }
+
+    .panel-body { padding: 14px 16px; }
+
+    /* Cyber Search Input */
+    #search {
+      width: 100%;
+      padding: 12px 16px;
+      background: rgba(0, 0, 0, 0.7);
+      border: 1px solid rgba(0, 240, 255, 0.4);
+      color: var(--neon-cyan);
+      border-radius: 2px;
+      outline: none;
+      font-size: 14px;
+      font-family: 'Rajdhani', sans-serif;
+      font-weight: 500;
+      letter-spacing: 1px;
+      transition: all 0.3s ease;
+      box-shadow: 
+        0 0 15px rgba(0, 240, 255, 0.1),
+        inset 0 0 15px rgba(0, 240, 255, 0.05);
+    }
+
+    #search:focus {
+      border-color: var(--neon-magenta);
+      box-shadow: 
+        0 0 25px rgba(255, 0, 255, 0.2),
+        inset 0 0 20px rgba(255, 0, 255, 0.05);
+    }
+
+    #search::placeholder {
+      color: rgba(0, 240, 255, 0.35);
+      text-transform: uppercase;
+      font-size: 11px;
+      letter-spacing: 2px;
+    }
+
+    /* Cyber Tabs */
+    .tabs {
+      display: flex;
+      gap: 6px;
+      margin: 12px 0;
+    }
+
+    .tab {
+      flex: 1;
+      background: transparent;
+      border: 1px solid rgba(0, 240, 255, 0.25);
+      color: rgba(0, 240, 255, 0.5);
+      padding: 10px 8px;
+      border-radius: 2px;
+      cursor: pointer;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 10px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      transition: all 0.3s ease;
+    }
+
+    .tab:hover {
+      border-color: var(--neon-cyan);
+      color: var(--neon-cyan);
+      box-shadow: 0 0 20px rgba(0, 240, 255, 0.2);
+    }
+
+    .tab.active {
+      background: linear-gradient(135deg, rgba(0, 240, 255, 0.15), rgba(255, 0, 255, 0.1));
+      border-color: var(--neon-cyan);
+      color: #fff;
+      box-shadow: 
+        0 0 25px rgba(0, 240, 255, 0.3),
+        inset 0 0 15px rgba(0, 240, 255, 0.15);
+    }
+
+    /* Place Items */
+    .place-list { max-height: 340px; overflow-y: auto; }
+
+    .place-list::-webkit-scrollbar { width: 3px; }
+    .place-list::-webkit-scrollbar-track { background: rgba(0, 0, 0, 0.4); }
+    .place-list::-webkit-scrollbar-thumb { background: var(--neon-cyan); border-radius: 2px; }
+
+    .place {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px;
+      margin-bottom: 6px;
+      background: rgba(0, 0, 0, 0.5);
+      border: 1px solid rgba(0, 240, 255, 0.1);
+      border-radius: 2px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .place::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(0, 240, 255, 0.1), transparent);
+      transition: left 0.5s ease;
+    }
+
+    .place:hover {
+      background: rgba(0, 240, 255, 0.08);
+      border-color: rgba(0, 240, 255, 0.4);
+      box-shadow: 
+        0 0 20px rgba(0, 240, 255, 0.15),
+        inset 0 0 15px rgba(0, 240, 255, 0.05);
+      transform: translateX(-3px);
+    }
+
+    .place:hover::before {
+      left: 100%;
+    }
+
+    .place img {
+      width: 52px;
+      height: 36px;
+      object-fit: cover;
+      border-radius: 2px;
+      border: 1px solid rgba(0, 240, 255, 0.3);
+      filter: saturate(0.7) contrast(1.2) brightness(0.9);
+    }
+
+    .place-info { flex: 1; }
+
+    .place-info strong {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 11px;
+      color: #fff;
+      letter-spacing: 1px;
+    }
+
+    .place-info span {
+      font-size: 10px;
+      color: rgba(0, 240, 255, 0.5);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .place button {
+      background: linear-gradient(135deg, var(--neon-cyan), var(--neon-purple));
+      border: none;
+      color: #000;
+      padding: 8px 12px;
+      border-radius: 2px;
+      cursor: pointer;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      transition: all 0.3s ease;
+      box-shadow: 0 0 12px rgba(0, 240, 255, 0.3);
+    }
+
+    .place button:hover {
+      box-shadow: 0 0 30px rgba(0, 240, 255, 0.6);
+      transform: scale(1.05);
+    }
+
+    /* Footer Note */
+    .footer-note {
+      font-size: 10px;
+      color: rgba(0, 240, 255, 0.4);
+      margin-top: 12px;
+      padding-top: 12px;
+      border-top: 1px solid rgba(0, 240, 255, 0.1);
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      text-align: center;
+      line-height: 1.6;
+    }
+
+    .footer-note span { color: var(--neon-magenta); text-shadow: 0 0 10px var(--neon-magenta); }
+
+    /* System Message */
+    .sys-msg {
+      position: fixed;
+      left: 20px;
+      bottom: 20px;
+      background: rgba(5, 2, 20, 0.95);
+      padding: 12px 18px;
+      border-radius: 2px;
+      border: 1px solid var(--neon-cyan);
+      font-size: 12px;
+      color: var(--neon-cyan);
+      z-index: 1500;
+      font-family: 'Rajdhani', sans-serif;
+      letter-spacing: 1px;
+      box-shadow: 
+        0 0 25px rgba(0, 240, 255, 0.25),
+        inset 0 0 20px rgba(0, 240, 255, 0.1);
+      animation: msgSlideIn 0.3s ease;
+      text-transform: uppercase;
+    }
+
+    @keyframes msgSlideIn {
+      from { transform: translateX(-100px); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
+    }
+
+    /* Mobile Responsive */
+    @media (max-width: 900px) {
+      .panel {
+        width: 94%;
+        left: 3%;
+        right: auto;
+        top: 10px;
+      }
+    }
+
+    /* Glitch effect for header on load */
+    @keyframes glitch {
+      0% { text-shadow: 2px 0 var(--neon-magenta), -2px 0 var(--neon-cyan); }
+      25% { text-shadow: -2px 0 var(--neon-magenta), 2px 0 var(--neon-cyan); }
+      50% { text-shadow: 2px 0 var(--neon-cyan), -2px 0 var(--neon-magenta); }
+      75% { text-shadow: -2px 0 var(--neon-cyan), 2px 0 var(--neon-magenta); }
+      100% { text-shadow: 2px 0 var(--neon-magenta), -2px 0 var(--neon-cyan); }
+    }
+
+    header h1 {
+      animation: glitch 0.8s ease-in-out;
+    }
+
+    /* No results message */
+    .no-results {
+      text-align: center;
+      padding: 30px;
+      color: rgba(0, 240, 255, 0.4);
+      font-family: 'Orbitron', sans-serif;
+      font-size: 11px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+
+    /* Coordinate display */
+    .coord-display {
+      position: fixed;
+      left: 20px;
+      top: 80px;
+      background: rgba(5, 2, 20, 0.9);
+      padding: 10px 14px;
+      border: 1px solid rgba(0, 240, 255, 0.25);
+      font-family: 'Orbitron', monospace;
+      font-size: 10px;
+      color: var(--neon-cyan);
+      letter-spacing: 1px;
+      border-radius: 2px;
+      z-index: 100;
+    }
+
+    .coord-display span {
+      color: var(--neon-magenta);
+    }
   </style>
 </head>
 <body>
   <header>
-    <h1>TravelMap — 3D Globe (Orbit + Atmosphere)</h1>
-    <div style="font-size:13px;opacity:0.85">Robust loader for OrbitControls and graceful fallback</div>
+    <h1>CYBER GLOBE</h1>
+    <div class="subtitle">▣ Cyberspace Navigation System v2.0</div>
   </header>
 
   <div id="container"></div>
 
+  <div id="coord-display" class="coord-display">
+    LAT: <span id="coord-lat">0.00</span> | LON: <span id="coord-lon">0.00</span>
+  </div>
+
   <aside class="panel">
-    <h2>🌐 Travel Console</h2>
+    <div class="panel-header">
+      <h2>⚡ Navigation Console</h2>
+    </div>
+    <div class="panel-body">
+      <input id="search" type="text" placeholder="Search location..." />
 
-  <input
-    id="search"
-    type="text"
-    placeholder="Search city, country..."/>
+      <div class="tabs">
+        <button class="tab active" data-type="visited">◈ Visited</button>
+        <button class="tab" data-type="wishlist">◇ Wishlist</button>
+      </div>
 
-  <div class="tabs">
-    <button class="tab active" data-type="visited">Visited</button>
-    <button class="tab" data-type="wishlist">Wishlist</button>
-  </div>
+      <div id="visited-list" class="place-list"></div>
 
-  <div id="visited-list"></div>
-
-  <div class="footer-note">
-    Click a pin or search to lock target.<br>
-    Neon mode active ⚡
-  </div>
+      <div class="footer-note">
+        Drag to rotate ⚡ Scroll to zoom<br>
+        <span>Neon mode active</span>
+      </div>
+    </div>
   </aside>
 
   <div id="sys-msg" class="sys-msg" style="display:none"></div>
